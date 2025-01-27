@@ -1,6 +1,5 @@
 from random import randint
 from time import sleep
-
 from mcpi import minecraft, block
 
 # Bot configuration
@@ -63,80 +62,79 @@ wrongAnswer = "Oh no, you failed the answer..."
 # Create connection to Minecraft
 mc = minecraft.Minecraft.create()
 
+# Functional helpers
+send_message = lambda mc, message: mc.postToChat(botChat + message)
+get_user_response = lambda mc: next((msg.message.strip() for msg in mc.events.pollChatPosts()), None)
+filter_messages = lambda mc, cond: list(filter(cond, mc.events.pollChatPosts()))
+
+
+def ask_question(mc, topic):
+    # Select and ask a random question.
+    question, answer = questions[topic][randint(0, len(questions[topic]) - 1)]
+    send_message(mc, question)
+    return answer
+
+
+def handle_wrong_answer(mc):
+    # Handle wrong answers.
+    send_message(mc, wrongAnswer)
+    player_pos = mc.player.getPos()
+    mc.player.setPos(player_pos.x, player_pos.y + 30, player_pos.z)     # move player 30 blocks up
+    mc.setBlock(player_pos.x, player_pos.y, player_pos.z, block.TNT.id)     # set TNT block (inactive)
+    mc.setBlock(player_pos.x + 1, player_pos.y, player_pos.z, block.FIRE.id)    # ignite TNT block with fire block
+    sleep(4)
+
+
+def play_trivial(mc):
+    # Main game logic
+
+    # Send intro messages
+    list(map(lambda line: send_message(mc, line), gameIntro))
+    send_message(mc, playMessage)
+
+    # Wait for the player's decision
+    while True:
+        response = get_user_response(mc)
+        if response is None:
+            continue  # Esperar más mensajes si no hay respuesta
+        response = response.upper()
+        if response == "Y":
+            send_message(mc, "Let's play!")
+            break
+        elif response == "N":
+            send_message(mc, "Okay, see you next time!")
+            return
+
+    # Let the player choose a topic
+    send_message(mc, "Choose a topic by typing its number:")
+    list(map(lambda key: send_message(mc, f"{key}: {topics[key]}"), topics.keys()))
+
+    topic_choice = None
+    while topic_choice not in topics:
+        topic_choice = get_user_response(mc)
+
+    chosen_topic = topics[topic_choice]
+    send_message(mc, f"You chose {chosen_topic}!")
+
+    # Ask a question
+    correct_answer = ask_question(mc, chosen_topic)
+
+    # Wait for player's answer
+    while True:
+        player_answer = get_user_response(mc)
+        if player_answer is None:
+            continue  # Esperar más mensajes si no hay respuesta
+        if player_answer.lower() == correct_answer.lower():
+            send_message(mc, correctAnswer)
+            break
+        else:
+            handle_wrong_answer(mc)
+            break
+
+
 # Main loop
 while True:
     sleep(2)
-    msgs = mc.events.pollChatPosts()
-    for msg in msgs:
-        # Check if the bot is mentioned
-        if botTag in msg.message:
-            # Send intro and play message
-            for line in gameIntro:
-                mc.postToChat(botChat + line)
-            mc.postToChat(botChat + playMessage)
-
-            # Wait for response to play
-            playing = False
-            while not playing:
-                sleep(1)
-                responses = mc.events.pollChatPosts()
-                for response in responses:
-                    userResponse = response.message.strip().upper()  # Normalize message
-                    if "Y" in userResponse:
-                        mc.postToChat(botChat + "Let's play!")
-                        playing = True
-                        break
-                    elif "N" in userResponse:
-                        mc.postToChat(botChat + "Okay, see you next time!")
-                        playing = True
-                        break
-
-            # If player wants to play
-            if playing:
-                # Show topics
-                mc.postToChat(botChat + "Choose a topic by typing its number:")
-                for key, topic in topics.items():
-                    mc.postToChat(f"{key}: {topic}")
-
-                chosenTopic = None
-                while not chosenTopic:
-                    sleep(1)
-                    topic_msgs = mc.events.pollChatPosts()
-                    for topic_msg in topic_msgs:
-                        topicChoice = topic_msg.message.strip()
-                        if topicChoice in topics:
-                            chosenTopic = topics[topicChoice]
-                            mc.postToChat(botChat + f"You chose {chosenTopic}!")
-                            break
-
-                # Pick a random question
-                question, answer = questions[chosenTopic][randint(0, len(questions[chosenTopic]) - 1)]
-                mc.postToChat(botChat + question)
-
-                # Wait for the player's answer
-                answered = False
-                while not answered:
-                    sleep(1)
-                    answers_msgs = mc.events.pollChatPosts()
-                    for answer_msg in answers_msgs:
-                        playerAnswer = answer_msg.message.strip().lower()
-                        if playerAnswer == answer.lower():
-                            mc.postToChat(botChat + correctAnswer)
-                            answered = True
-                            break
-                        else:
-                            mc.postToChat(botChat + wrongAnswer)
-
-                            # Move player up
-                            playerPos = mc.player.getPos()
-                            mc.player.setPos(playerPos.x, playerPos.y + 30, playerPos.z)
-
-                            # Place TNT and fire below the player
-                            mc.setBlock(playerPos.x, playerPos.y, playerPos.z, block.TNT.id)  # Place TNT
-                            mc.setBlock(playerPos.x+1, playerPos.y, playerPos.z, block.FIRE.id)  # Ignite TNT
-
-                            # Give TNT time to explode
-                            sleep(4)
-
-                            answered = True
-                            break
+    messages = filter_messages(mc, lambda msg: botTag in msg.message)
+    if messages:
+        play_trivial(mc)
