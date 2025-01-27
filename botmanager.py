@@ -4,17 +4,17 @@ from itertools import repeat
 
 from bot import Bot
 
-class BotManager:
+class BotManager(object):
     __instance = None
     __interval = 1
 
     # Singleton
-    def __call__(self):
-        if self.__instance is None:
-            self.__instance = self
-            self.__bots = list()
-            self.__mc = minecraft.Minecraft.create()
-        return self.__instance
+    def __new__(cls):
+        if cls.__instance is None:
+            cls.__instance = super(BotManager, cls).__new__(cls)
+            cls.__bots = list()
+            cls.__mc = minecraft.Minecraft.create()
+        return cls.__instance
     
     def add_bot(self, bot):
         if not isinstance(bot, Bot):
