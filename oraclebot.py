@@ -1,40 +1,40 @@
-from time import sleep
 from random import randint
-from mcpi import minecraft
 
-botName="OracleBot"
-botTag="@" + botName
-botChat = "<" + botName + "> "
+from bot import Bot
 
-answers = [
-    "It is certain",
-    "Reply hazy, try again",
-    "Don’t count on it",
-    "It is decidedly so",
-    "Ask again later",
-    "My reply is no",
-    "Without a doubt",
-    "Better not tell you now",
-    "My sources say no",
-    "Yes definitely",
-    "Cannot predict now",
-    "Outlook not so good",
-    "You may rely on it",
-    "Concentrate and ask again",
-    "Very doubtful",
-    "As I see it, yes",
-    "Most likely",
-    "Outlook good",
-    "Yes",
-    "Signs point to yes",
-]
+class OracleBot(Bot):
+    __answers = [
+        "It is certain",
+        "Reply hazy, try again",
+        "Don’t count on it",
+        "It is decidedly so",
+        "Ask again later",
+        "My reply is no",
+        "Without a doubt",
+        "Better not tell you now",
+        "My sources say no",
+        "Yes definitely",
+        "Cannot predict now",
+        "Outlook not so good",
+        "You may rely on it",
+        "Concentrate and ask again",
+        "Very doubtful",
+        "As I see it, yes",
+        "Most likely",
+        "Outlook good",
+        "Yes",
+        "Signs point to yes",
+    ]
 
-mc = minecraft.Minecraft.create()
-
-while True:
-    sleep(2)
-    msgs = mc.events.pollChatPosts()
-    for msg in msgs:
-        if botTag in msg.message:
-            i = randint(0, len(answers))
-            mc.postToChat(botChat + answers[i])
+    def __init__(self):
+        super().__init__("OracleBot")
+        self.add_trigger(lambda env: self.__trigger(env))
+        self.add_action (lambda env: self.__post_answer(env))
+        
+    def __trigger(self, env):
+        return any(["@OracleBot" in msg.message for msg in env["messages"]])
+    
+    def __post_answer(self, env):
+        i = randint(0, len(self.__answers) - 1)
+        msg = "<OracleBot> " + self.__answers[i]
+        env["mc"].postToChat(msg)
