@@ -96,8 +96,8 @@ def play_trivial(mc):
     while True:
         response = get_user_response(mc)
         if response is None:
-            continue  # Esperar más mensajes si no hay respuesta
-        response = response.upper()
+            continue                        # Wait for messages if no response
+        response = response.upper()         # Normalize response
         if response == "Y":
             send_message(mc, "Let's play!")
             break
@@ -107,24 +107,24 @@ def play_trivial(mc):
 
     # Let the player choose a topic
     send_message(mc, "Choose a topic by typing its number:")
-    list(map(lambda key: send_message(mc, f"{key}: {topics[key]}"), topics.keys()))
+    list(map(lambda key: send_message(mc, f"{key}: {topics[key]}"), topics.keys()))     # Post to chat topics
 
     topic_choice = None
     while topic_choice not in topics:
-        topic_choice = get_user_response(mc)
+        topic_choice = get_user_response(mc)                # Get user's topic choice
 
     chosen_topic = topics[topic_choice]
     send_message(mc, f"You chose {chosen_topic}!")
 
-    # Ask a question
+    # Ask a question about chosen topic
     correct_answer = ask_question(mc, chosen_topic)
 
     # Wait for player's answer
     while True:
         player_answer = get_user_response(mc)
         if player_answer is None:
-            continue  # Esperar más mensajes si no hay respuesta
-        if player_answer.lower() == correct_answer.lower():
+            continue                                            # Wait for messages if no response
+        if player_answer.lower() == correct_answer.lower():     # Normalize response
             send_message(mc, correctAnswer)
             break
         else:
@@ -135,6 +135,6 @@ def play_trivial(mc):
 # Main loop
 while True:
     sleep(2)
-    messages = filter_messages(mc, lambda msg: botTag in msg.message)
+    messages = filter_messages(mc, lambda msg: botTag in msg.message)       # find botTag in chat
     if messages:
         play_trivial(mc)
