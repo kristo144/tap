@@ -1,8 +1,5 @@
 from inspect import signature
 
-#import trigger
-#import action
-
 class Bot:
     __triggers = list()
     __actions  = list()
