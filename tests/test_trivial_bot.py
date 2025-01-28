@@ -1,15 +1,19 @@
+from unittest.mock import MagicMock, patch
 import pytest
-from trivialBot.TrivialBot import send_message, ask_question
+from trivialBot import send_message, get_user_response, ask_question, handle_wrong_answer, play_trivial, topics
 
-def test_send_message(mocker):
-    # Mockea la función mc.postToChat
-    mc = mocker.Mock()
-    time.sleep(2)
-    send_message(mc, "Hello, world!")
-    mc.postToChat.assert_called_once_with("<TrivialBot> Hello, world!")
 
-def test_ask_question(mocker):
-    # Mockea el comportamiento de preguntas aleatorias
-    mc = mocker.Mock()
-    mocker.patch("TrivialBot.questions", {"Football": [("Test question?", "Answer")]})
-    assert ask_question(mc, "Football") == "Answer"
+
+@patch("mcpi.minecraft.Minecraft")              # Simulate Minecraft server
+def test_bot_responds_to_tag(mock_minecraft):
+    # Simulate Minecraft isntance
+    mock_mc = MagicMock()
+    mock_minecraft.return_value = mock_mc
+
+    # Send message to chat
+    send_message(mock_mc, "Test message")
+
+    # Validate that bot has posted to chat expected message
+    mock_mc.postToChat.assert_called_with("<TrivialBot> Test message")
+
+

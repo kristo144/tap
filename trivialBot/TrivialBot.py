@@ -59,8 +59,6 @@ questions = {
 correctAnswer = "Congratulations!"
 wrongAnswer = "Oh no, you failed the answer..."
 
-# Create connection to Minecraft
-mc = minecraft.Minecraft.create()
 
 # Functional helpers
 send_message = lambda mc, message: mc.postToChat(botChat + message)
@@ -133,7 +131,11 @@ def play_trivial(mc):
 
 
 # Main loop
-while True:
+if __name__ == "__main__":
+
+    # Create connection to Minecraft
+    mc = minecraft.Minecraft.create()
+
     sleep(2)
     messages = filter_messages(mc, lambda msg: botTag in msg.message)       # find botTag in chat
     if messages:
