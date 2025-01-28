@@ -28,10 +28,7 @@ class OracleBot(Bot):
 
     def __init__(self):
         super().__init__("OracleBot")
-        self.add_trigger(lambda env: any(["@OracleBot" in msg.message for msg in env["messages"]]))
-        self.add_action (lambda env: self.__post_answer(env))
         
-    def __post_answer(self, env):
+    def on_message(self, mc, msg):
         i = randint(0, len(self.__answers) - 1)
-        msg = "<OracleBot> " + self.__answers[i]
-        env["mc"].postToChat(msg)
+        self.say(mc, self.__answers[i])
