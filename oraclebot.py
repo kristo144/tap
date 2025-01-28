@@ -2,8 +2,8 @@ from time import sleep
 from random import randint
 from mcpi import minecraft
 
-botName="OracleBot"
-botTag="@" + botName
+botName = "OracleBot"
+botTag = "@" + botName
 botChat = "<" + botName + "> "
 
 answers = [
@@ -29,12 +29,16 @@ answers = [
     "Signs point to yes",
 ]
 
-mc = minecraft.Minecraft.create()
-
-while True:
-    sleep(2)
+def process_messages(mc):
     msgs = mc.events.pollChatPosts()
     for msg in msgs:
         if botTag in msg.message:
-            i = randint(0, len(answers))
+            i = randint(0, len(answers) - 1)
             mc.postToChat(botChat + answers[i])
+
+
+if __name__ == "__main__":
+    mc = minecraft.Minecraft.create()
+    while True:
+        sleep(2)
+        process_messages(mc)
