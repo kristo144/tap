@@ -11,6 +11,7 @@ class BotManager(object):
         if cls.__instance is None:
             cls.__instance = super(BotManager, cls).__new__(cls)
             cls.__bots = list()
+            cls.__bots.append(ManagerBot(cls.__bots))
             cls.__mc = minecraft.Minecraft.create()
         return cls.__instance
     
@@ -30,3 +31,12 @@ class BotManager(object):
         while True:
             sleep(1)
             self.tick()
+            
+class ManagerBot(Bot):
+    def __init__(self, bots):
+        super().__init__("ManagerBot")
+        self.__bots = bots
+        
+    def on_message(self, mc, msg):
+        self.say(mc, "The following bots are available:")
+        [ self.say(mc, bot.get_name()) for bot in self.__bots ]
