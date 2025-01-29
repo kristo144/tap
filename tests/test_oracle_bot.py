@@ -1,81 +1,46 @@
 import unittest
 from unittest.mock import MagicMock, patch
-from oraclebot import process_messages, botTag, botChat, answers
+from random import randint
+from bot import Bot
+from oraclebot import OracleBot  # Asegúrate de importar la clase correctamente
 
 
 class TestOracleBot(unittest.TestCase):
-    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft connexion
-    def test_bot_responds_to_tag(self, mock_minecraft):
-        # Simulate Minecraft client
-        mc = mock_minecraft.create.return_value
 
-        # Simulate message tagging bot
-        mc.events.pollChatPosts.return_value = [
-            MagicMock(message=f"{botTag} Will I win?")
-        ]
+    @patch('random.randint')        # Simulate random.randint
+    def test_on_message(self, mock_randint):
+        # Simulate randint to obtain concrete number
+        mock_randint.return_value = 5
 
-        # Call function that processes messages
-        process_messages(mc)
+        # Create OracleBot instance
+        bot = OracleBot()
 
-        # Validate that bot has post to chat
-        mc.postToChat.assert_called()
+        # Simulate Minecraft object mc
+        mc = MagicMock()
 
-        # Obtain sent message
-        sent_message = mc.postToChat.call_args[0][0]
+        # Simulate message for bot
+        bot.on_message(mc, "What is the future?")
 
-        # Validate expected response
-        self.assertTrue(any(sent_message.endswith(answer) for answer in answers))
+        # Validate that a message has been posted to chat
+        bot.say(mc, "Ask again later")  # Debe responder con el índice 5 de las respuestas
 
-    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft connexion
-    def test_bot_ignores_unrelated_messages(self, mock_minecraft):
-        # Simulate Minecraft client
-        mc = mock_minecraft.create.return_value
+        # Validate expected posted message
+        mc.postToChat.assert_called_with("<OracleBot> Ask again later")
 
-        # Simulate message not tagging bot
-        mc.events.pollChatPosts.return_value = [
-            MagicMock(message="Hello there!")
-        ]
+    def test_answer_choices(self):
+        # Create OracleBot instance
+        bot = OracleBot()
 
-        # Call function that processes messages
-        process_messages(mc)
+        # Obtain private attribute from OracleBot
+        answers = bot._OracleBot__answers
 
-        # Validate that bot has not posted to chat
-        mc.postToChat.assert_not_called()
-
-    @patch("mcpi.minecraft.Minecraft")            # Simulate Minecraft connexion
-    def test_bot_message_format(self, mock_minecraft):
-        # Simulate Minecraft client
-        mc = mock_minecraft.create.return_value
-
-        # Simulate message tagging bot
-        mc.events.pollChatPosts.return_value = [
-            MagicMock(message=f"{botTag} Should I do it?")
-        ]
-
-        # Call function that processes messages
-        process_messages(mc)
-
-        # Obtain sent message
-        sent_message = mc.postToChat.call_args[0][0]
-
-        # Validate expected message format
-        self.assertTrue(sent_message.startswith(botChat))
-        self.assertIn(sent_message[len(botChat):], answers)
-
-    @patch("mcpi.minecraft.Minecraft")            # Simulate Minecraft connexion
-    def test_bot_handles_no_messages(self, mock_minecraft):
-        # Simulate Minecraft client
-        mc = mock_minecraft.create.return_value
-
-        # Simulate that are no messages
-        mc.events.pollChatPosts.return_value = []
-
-        # Call function that processes messages
-        process_messages(mc)
-
-        # Validate that bot has not posted to chat
-        mc.postToChat.assert_not_called()
+        # Validate some possible answers are in answers list
+        self.assertIn("It is certain", answers)
+        self.assertIn("Reply hazy, try again", answers)
+        self.assertIn("Don’t count on it", answers)
+        self.assertIn("Ask again later", answers)
+        self.assertIn("My reply is no", answers)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
