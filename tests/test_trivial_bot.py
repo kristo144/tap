@@ -4,7 +4,7 @@ from trivialBot import send_message, get_user_response, ask_question, handle_wro
 
 
 
-@patch("mcpi.minecraft.Minecraft")              # Simulate Minecraft server
+@patch("mcpi.minecraft.Minecraft")              # Simulate Minecraft connexion
 def test_bot_responds_to_tag(mock_minecraft):
     # Simulate Minecraft instance
     mock_mc = MagicMock()
@@ -17,7 +17,7 @@ def test_bot_responds_to_tag(mock_minecraft):
     mock_mc.postToChat.assert_called_with("<TrivialBot> Test message")
 
 
-@patch("mcpi.minecraft.Minecraft")
+@patch("mcpi.minecraft.Minecraft")              # Simulate Minecraft connexion
 def test_bot_sends_intro_messages(mock_minecraft):
     # Simulate Minecraft instance
     mock_mc = MagicMock()
@@ -32,7 +32,7 @@ def test_bot_sends_intro_messages(mock_minecraft):
         mock_mc.postToChat.assert_any_call(f"<TrivialBot> {line}")
 
 
-@patch("mcpi.minecraft.Minecraft")
+@patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft connexion
 def test_bot_responds_to_topic_choice(mock_minecraft):
     # Simulate Minecraft instance
     mock_mc = MagicMock()
@@ -51,7 +51,7 @@ def test_bot_responds_to_topic_choice(mock_minecraft):
     mock_mc.postToChat.assert_called_with("<TrivialBot> You chose Football!")
 
 
-@patch("mcpi.minecraft.Minecraft")
+@patch("mcpi.minecraft.Minecraft")          # Simulate Minecraft connexion
 def test_bot_responds_to_correct_answer(mock_minecraft):
     # Simulate Minecraft instance
     mock_mc = MagicMock()
@@ -70,8 +70,8 @@ def test_bot_responds_to_correct_answer(mock_minecraft):
     # Validate that bot has posted to chat expected answer message
     mock_mc.postToChat.assert_called_with("<TrivialBot> Correct answer: France")
 
-@patch("mcpi.minecraft.Minecraft")  # Mock de la conexión a Minecraft
-@patch("mcpi.block")  # Mock del módulo block
+@patch("mcpi.minecraft.Minecraft")  # Simulate Minecraft connexion
+@patch("mcpi.block")                # Simulate Minecraft block
 def test_bot_responds_to_wrong_answer(mock_block, mock_minecraft):
     # Simulate Minecraft instance
     mock_mc = MagicMock()
@@ -98,7 +98,7 @@ def test_bot_responds_to_wrong_answer(mock_block, mock_minecraft):
     mock_mc.setBlock.assert_any_call(player_pos.x + 1, player_pos.y, player_pos.z, 51)  # Fire
 
 
-@patch("mcpi.minecraft.Minecraft")
+@patch("mcpi.minecraft.Minecraft")          # Simulate Minecraft connexion
 def test_bot_responds_to_play_decision(mock_minecraft):
     # Simulate Minecraft instance
     mock_mc = MagicMock()
@@ -116,7 +116,7 @@ def test_bot_responds_to_play_decision(mock_minecraft):
     mock_mc.postToChat.assert_any_call("<TrivialBot> Let's play!")
 
 
-@patch("mcpi.minecraft.Minecraft")
+@patch("mcpi.minecraft.Minecraft")          # Simulate Minecraft connexion
 def test_bot_does_not_play(mock_minecraft):
     # Simulate Minecraft instance
     mock_mc = MagicMock()

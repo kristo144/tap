@@ -4,7 +4,7 @@ from oraclebot import process_messages, botTag, botChat, answers
 
 
 class TestOracleBot(unittest.TestCase):
-    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft server
+    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft connexion
     def test_bot_responds_to_tag(self, mock_minecraft):
         # Simulate Minecraft client
         mc = mock_minecraft.create.return_value
@@ -26,7 +26,7 @@ class TestOracleBot(unittest.TestCase):
         # Validate expected response
         self.assertTrue(any(sent_message.endswith(answer) for answer in answers))
 
-    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft server
+    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft connexion
     def test_bot_ignores_unrelated_messages(self, mock_minecraft):
         # Simulate Minecraft client
         mc = mock_minecraft.create.return_value
@@ -42,7 +42,7 @@ class TestOracleBot(unittest.TestCase):
         # Validate that bot has not posted to chat
         mc.postToChat.assert_not_called()
 
-    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft server
+    @patch("mcpi.minecraft.Minecraft")            # Simulate Minecraft connexion
     def test_bot_message_format(self, mock_minecraft):
         # Simulate Minecraft client
         mc = mock_minecraft.create.return_value
@@ -62,7 +62,7 @@ class TestOracleBot(unittest.TestCase):
         self.assertTrue(sent_message.startswith(botChat))
         self.assertIn(sent_message[len(botChat):], answers)
 
-    @patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft server
+    @patch("mcpi.minecraft.Minecraft")            # Simulate Minecraft connexion
     def test_bot_handles_no_messages(self, mock_minecraft):
         # Simulate Minecraft client
         mc = mock_minecraft.create.return_value
