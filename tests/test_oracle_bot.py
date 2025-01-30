@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 from random import randint
 from bot import Bot
-from oraclebot import OracleBot  # Asegúrate de importar la clase correctamente
+from oraclebot import OracleBot
 
 
 class TestOracleBot(unittest.TestCase):
