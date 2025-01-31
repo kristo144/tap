@@ -40,7 +40,3 @@ class TestOracleBot(unittest.TestCase):
         self.assertIn("Don’t count on it", answers)
         self.assertIn("Ask again later", answers)
         self.assertIn("My reply is no", answers)
-
-
-if __name__ == '__main__':
-    unittest.main()

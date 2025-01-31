@@ -21,6 +21,3 @@ class TestEchoBot(unittest.TestCase):
 
         # Check if say() was called with the expected message
         bot.say.assert_called_once_with(mock_mc, "Hello, EchoBot!")
-
-if __name__ == "__main__":
-    unittest.main()

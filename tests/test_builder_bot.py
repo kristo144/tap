@@ -39,7 +39,3 @@ class TestBuilderBot(unittest.TestCase):
         # Validate expected call to setBlocks for door
         for call in expected_door_calls:
             mock_mc.setBlock.assert_any_call(*call)
-
-
-if __name__ == "__main__":
-    unittest.main()
