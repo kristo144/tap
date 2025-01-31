@@ -56,6 +56,8 @@ Instantiate and add bots to the manager using the `add_bot()` method.
 Finally, use `BotManager.loop()` to run the manager on its own,
 or `BotManager.tick()` to run the manager in your own custom loop.
 
+To run the examples, first start the minecraft server, then run `run.sh`
+
 ## Examples
 
 The following bot examples are available in this repository:
