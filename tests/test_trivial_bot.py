@@ -1,134 +1,110 @@
+import unittest
 from unittest.mock import MagicMock, patch
-import pytest
-from trivialBot import send_message, get_user_response, ask_question, handle_wrong_answer, play_trivial, topics, gameIntro, playMessage
+from random import randint
+from mcpi.vec3 import Vec3
+#from trivialBot import send_message, get_user_response, ask_question, handle_wrong_answer, play_trivial, topics, gameIntro, playMessage
 
+from trivialbot import TrivialBot
 
+class TestTrivialBot(unittest.TestCase):
 
-@patch("mcpi.minecraft.Minecraft")              # Simulate Minecraft connexion
-def test_bot_responds_to_tag(mock_minecraft):
-    # Simulate Minecraft instance
-    mock_mc = MagicMock()
-    mock_minecraft.return_value = mock_mc
+    def test_state_init(self):
+        mc = MagicMock()
+        bot = TrivialBot()
+        bot.on_message(mc, None)
+        mc.postToChat.assert_called()
+        self.assertEqual(bot.state, TrivialBot.State.CONFIRM)
 
-    # Send message to chat
-    send_message(mock_mc, "Test message")
+    def test_deny_game(self):
+        mc = MagicMock()
+        msg = MagicMock()
+        msg.message = "N"
+        bot = TrivialBot()
+        bot.state = TrivialBot.State.CONFIRM
+        bot.on_message(mc, msg)
+        mc.postToChat.assert_called()
+        self.assertEqual(bot.state, TrivialBot.State.INIT)
 
-    # Validate that bot has posted to chat expected message
-    mock_mc.postToChat.assert_called_with("<TrivialBot> Test message")
+    def test_accept_game(self):
+        mc = MagicMock()
+        msg = MagicMock()
+        msg.message = "Y"
+        bot = TrivialBot()
+        bot.state = TrivialBot.State.CONFIRM
+        bot.on_message(mc, msg)
+        mc.postToChat.assert_called()
+        self.assertEqual(bot.state, TrivialBot.State.TOPIC)
 
+    def test_retry_confirm(self):
+        mc = MagicMock()
+        msg = MagicMock()
+        msg.message = "foobar"
+        bot = TrivialBot()
+        bot.state = TrivialBot.State.CONFIRM
+        bot.on_message(mc, msg)
+        mc.postToChat.assert_called()
+        self.assertEqual(bot.state, TrivialBot.State.CONFIRM)
 
-@patch("mcpi.minecraft.Minecraft")              # Simulate Minecraft connexion
-def test_bot_sends_intro_messages(mock_minecraft):
-    # Simulate Minecraft instance
-    mock_mc = MagicMock()
-    mock_minecraft.return_value = mock_mc
+    def test_invalid_topic(self):
+        mc = MagicMock()
+        msg = MagicMock()
+        msg.message = "5"
+        bot = TrivialBot()
+        bot.state = TrivialBot.State.TOPIC
+        bot.on_message(mc, msg)
+        mc.postToChat.assert_any_call("<TrivialBot> Choose a topic by typing its number:")
+        self.assertEqual(bot.state, TrivialBot.State.TOPIC)
 
-    # Send introduction messages to chat
-    for line in gameIntro:
-        send_message(mock_mc, line)
+    @patch('trivialbot.randint')
+    def test_valid_topic(self, mock_randint):
+        mock_randint.return_value = 0
+        mc = MagicMock()
+        msg = MagicMock()
+        msg.message = "2"
+        bot = TrivialBot()
+        bot.state = TrivialBot.State.TOPIC
+        bot.on_message(mc, msg)
+        mc.postToChat.assert_any_call("<TrivialBot> What is the chemical symbol for water? (Answer with a symbol)")
+        self.assertEqual(bot.state, TrivialBot.State.ANSWER)
+        self.assertEqual(bot.correct, "H2O")
+        
+    def test_right_answer(self):
+        mc = MagicMock()
+        ans = "foobar"
+        msg = MagicMock()
+        msg.message = ans
+        bot = TrivialBot()
+        bot.state = TrivialBot.State.ANSWER
+        bot.correct = ans
+        bot.on_message(mc, msg)
+        mc.postToChat.assert_any_call("<TrivialBot> Congratulations!")
+        self.assertEqual(bot.state, TrivialBot.State.INIT)
+        self.assertFalse(hasattr(bot, "correct"))
 
-    # Validate that bot has posted to chat expected message
-    for line in gameIntro:
-        mock_mc.postToChat.assert_any_call(f"<TrivialBot> {line}")
+    def test_wrong_answer(self):
+        mc = MagicMock()
+        mc.player.getPos.return_value = Vec3(0, 0, 0)
+        msg = MagicMock()
+        msg.message = "not correct"
+        bot = TrivialBot()
+        bot.state = TrivialBot.State.ANSWER
+        bot.correct = "correct"
+        bot.on_message(mc, msg)
+        mc.postToChat.assert_any_call("<TrivialBot> Oh no, you failed the answer...")
+        self.assertEqual(bot.state, TrivialBot.State.INIT)
+        self.assertFalse(hasattr(bot, "correct"))
+        mc.player.setPos.assert_called_with(0, 30, 0)
+        
+    def test_invalid_state(self):
+        bot = TrivialBot()
+        bot.state = 5
+        self.assertRaises(ValueError, TrivialBot.on_message, bot, None, None)
 
+    def test_bot_sends_intro_messages(self):
+        mc = MagicMock()
+        bot = TrivialBot()
+        bot.on_message(mc, None)
 
-@patch("mcpi.minecraft.Minecraft")             # Simulate Minecraft connexion
-def test_bot_responds_to_topic_choice(mock_minecraft):
-    # Simulate Minecraft instance
-    mock_mc = MagicMock()
-    mock_minecraft.return_value = mock_mc
-
-    # Simulate user response (football)
-    user_response = "1"
-
-    # Send topics messages to chat
-    send_message(mock_mc, "Choose a topic by typing its number:")
-    send_message(mock_mc, f"1: Football")
-    topic_choice = user_response
-
-    # Validate that bot has posted to chat expected topic message
-    send_message(mock_mc, f"You chose {topics[topic_choice]}!")
-    mock_mc.postToChat.assert_called_with("<TrivialBot> You chose Football!")
-
-
-@patch("mcpi.minecraft.Minecraft")          # Simulate Minecraft connexion
-def test_bot_responds_to_correct_answer(mock_minecraft):
-    # Simulate Minecraft instance
-    mock_mc = MagicMock()
-    mock_minecraft.return_value = mock_mc
-
-    # Simulate correct user response (France) to Football question
-    correct_answer = "France"
-
-    # Send football question to chat
-    ask_question(mock_mc, "Football")
-
-    # Simulate correct user response
-    user_response = correct_answer
-    send_message(mock_mc, f"Correct answer: {user_response}")
-
-    # Validate that bot has posted to chat expected answer message
-    mock_mc.postToChat.assert_called_with("<TrivialBot> Correct answer: France")
-
-@patch("mcpi.minecraft.Minecraft")  # Simulate Minecraft connexion
-@patch("mcpi.block")                # Simulate Minecraft block
-def test_bot_responds_to_wrong_answer(mock_block, mock_minecraft):
-    # Simulate Minecraft instance
-    mock_mc = MagicMock()
-    mock_minecraft.return_value = mock_mc
-
-    # Simulate block
-    mock_block.TNT.id = 46  # TNT ID
-    mock_block.FIRE.id = 51  # Fire ID
-
-    # Simulate wrong user answer
-    handle_wrong_answer(mock_mc)
-
-    # Validate that bot has posted to chat failed message
-    mock_mc.postToChat.assert_any_call("<TrivialBot> Oh no, you failed the answer...")
-
-    # Validate that player has been moved
-    mock_mc.player.setPos.assert_called()
-
-    # Obtain simulate player pos
-    player_pos = mock_mc.player.getPos.return_value
-
-    # Validate that TNT and Fire block are set
-    mock_mc.setBlock.assert_any_call(player_pos.x, player_pos.y, player_pos.z, 46)  # TNT
-    mock_mc.setBlock.assert_any_call(player_pos.x + 1, player_pos.y, player_pos.z, 51)  # Fire
-
-
-@patch("mcpi.minecraft.Minecraft")          # Simulate Minecraft connexion
-def test_bot_responds_to_play_decision(mock_minecraft):
-    # Simulate Minecraft instance
-    mock_mc = MagicMock()
-    mock_minecraft.return_value = mock_mc
-
-    # Simulate that user wants to play
-    user_response = "Y"
-
-    # Call function that waits user response
-    send_message(mock_mc, playMessage)
-    if user_response == "Y":
-        send_message(mock_mc, "Let's play!")
-
-    # Validate that bot has posted play message
-    mock_mc.postToChat.assert_any_call("<TrivialBot> Let's play!")
-
-
-@patch("mcpi.minecraft.Minecraft")          # Simulate Minecraft connexion
-def test_bot_does_not_play(mock_minecraft):
-    # Simulate Minecraft instance
-    mock_mc = MagicMock()
-    mock_minecraft.return_value = mock_mc
-
-    # Simulate that user not wants to play
-    user_response = "N"
-
-    # Call function that waits user response
-    send_message(mock_mc, playMessage)
-    if user_response == "N":
-        send_message(mock_mc, "Okay, see you next time!")
-
-    # Validate that bot has posted not play message
-    mock_mc.postToChat.assert_any_call("<TrivialBot> Okay, see you next time!")
+        # Validate that bot has posted to chat expected message
+        map(mc.postToChat.assert_any_call,
+            map(lambda line: f"<TrivialBot> {line}", bot.gameIntro))
