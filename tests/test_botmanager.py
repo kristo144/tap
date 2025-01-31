@@ -1,6 +1,5 @@
 import unittest
 from unittest.mock import patch, MagicMock
-import mcpi.block as block
 from botmanager import BotManager, Bot
 
 class TestBotManager(unittest.TestCase):

@@ -7,7 +7,6 @@ class Bot:
     def on_message(self, mc, msg):
         """Function to execute when the bot is mentioned"""
         self.say(mc, "Hello!")
-        pass
     
     def get_name(self):
         return self.__name
