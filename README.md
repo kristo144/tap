@@ -55,3 +55,15 @@ Then create an instance of the `BotManager` class.
 Instantiate and add bots to the manager using the `add_bot()` method.
 Finally, use `BotManager.loop()` to run the manager on its own,
 or `BotManager.tick()` to run the manager in your own custom loop.
+
+## Examples
+
+The following bot examples are available in this repository:
+|Bot|Description|
+|---|---|
+|ManagerBot|Lists available bots|
+|OracleBot|Magic 8 ball clone, responds to yes or no questions|
+|EchoBot|Repeats what you said|
+|BuilderBot|Builds you a wooden house|
+|TrivialBot|Play a trivia game, if you dare...|
+|toBohcE|dais uoy tahw starpeR|
