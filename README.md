@@ -10,7 +10,7 @@ and can execute an action when they are mentioned.
 
 ## Architecture
 
-The bots are managed by a BotManager class.
+The bots are managed by a BotManager class, which is a singleton.
 This class handles the connection to the server and holds a list of bots.
 Periodically, the manager checks the chat for any bot mentions
 and executes any bots that are mentioned using inversion of control.
@@ -67,3 +67,13 @@ The following bot examples are available in this repository:
 |BuilderBot|Builds you a wooden house|
 |TrivialBot|Play a trivia game, if you dare...|
 |toBohcE|dais uoy tahw starpeR|
+
+## Diagrams
+
+### Class diagram
+
+![class diagram](doc/img/class.png)
+
+### Sequence diagram
+
+![sequence diagram](doc/img/sequence.png)
