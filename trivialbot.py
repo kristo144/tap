@@ -99,7 +99,7 @@ class TrivialBot(Bot):
                 
     def get_topic(self, mc, msg):
         response = self.get_response(msg)
-        if (response in self.topics):
+        if response in self.topics:
             chosen_topic = self.topics[response]
             self.say(mc, f"You chose {chosen_topic}!")
             self.correct = self.ask_question(mc, chosen_topic)

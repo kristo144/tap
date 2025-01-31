@@ -18,7 +18,7 @@ class BotManager(object):
     def add_bot(self, bot):
         if not isinstance(bot, Bot):
             raise TypeError("Object must be a Bot")
-        self.__bots.append(bot);
+        self.__bots.append(bot)
         
     def tick(self):
         msgs = self.__mc.events.pollChatPosts()
