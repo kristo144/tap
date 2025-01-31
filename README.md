@@ -73,7 +73,7 @@ The following bot examples are available in this repository:
 |EchoBot|Repeats what you said|
 |BuilderBot|Builds you a wooden house|
 |TrivialBot|Play a trivia game, if you dare...|
-|toBohcE|dais uoy tahw starpeR|
+|toBohcE|dias uoy tahw staepeR|
 
 ## Diagrams
 
