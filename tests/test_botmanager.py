@@ -6,14 +6,14 @@ from botmanager import BotManager, Bot
 class TestBotManager(unittest.TestCase):
 
     @patch("mcpi.minecraft.Minecraft")  # Simulate Minecraft connection
-    def test_singleton(self):
+    def test_singleton(self, mock_mc):
         """Ensure BotManager follows the singleton pattern."""
         mgr = BotManager()
         mgr2 = BotManager()
         self.assertIs(mgr, mgr2)
 
     @patch("mcpi.minecraft.Minecraft")  # Simulate Minecraft connection
-    def test_add_bot_valid(self):
+    def test_add_bot_valid(self, mock_mc):
         """Verify that a valid bot can be added to the manager."""
         mgr = BotManager()
         bot = Bot("Test")
@@ -22,13 +22,13 @@ class TestBotManager(unittest.TestCase):
         self.assertIn(bot, l)
 
     @patch("mcpi.minecraft.Minecraft")  # Simulate Minecraft connection
-    def test_add_bot_fail(self):
+    def test_add_bot_fail(self, mock_mc):
         """Ensure adding an invalid bot (non-Bot object) raises a TypeError."""
         mgr = BotManager()
         self.assertRaises(TypeError, BotManager.add_bot, mgr, 123)
 
     @patch('mcpi.minecraft.Minecraft')  # Simulate Minecraft connection
-    def test_tick(self):
+    def test_tick(self, mock_mc):
         """Check if tick() correctly processes chat messages for a bot."""
         mgr = BotManager()
         bot = MagicMock(spec=Bot)
@@ -45,7 +45,7 @@ class TestBotManager(unittest.TestCase):
         bot.get_name.assert_called_once()
 
     @patch('mcpi.minecraft.Minecraft')  # Simulate Minecraft connection
-    def test_manager_bot(self):
+    def test_manager_bot(self, mock_mc):
         """Check if ManagerBot responds correctly to a command in chat."""
         mgr = BotManager()
         msg = MagicMock()
