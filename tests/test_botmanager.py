@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import mcpi.block as block
 from botmanager import BotManager, Bot
 
-class TestBuilderBot(unittest.TestCase):
+class TestBotManager(unittest.TestCase):
 
     @patch("mcpi.minecraft.Minecraft")
     def test_singleton(self, mock_mc):
