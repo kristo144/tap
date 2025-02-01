@@ -84,3 +84,8 @@ The following bot examples are available in this repository:
 ### Sequence diagram
 
 ![sequence diagram](doc/img/sequence.png)
+
+### YouTube tutorial
+We offer a YouTube video where you can check how is the interaction with the framework.
+In the video you can watch what can exactly do every example bot.
+Link: https://youtu.be/7e-gCHYWo4Q 
