@@ -5,6 +5,8 @@ Authors:
 - Kristiyan Tonev
 - Eric Riveiro
 
+[Repository link](https://github.com/kristo144/tap)
+
 [![codecov](https://codecov.io/gh/kristo144/tap/graph/badge.svg?token=QBTZP7AM5N)](https://codecov.io/gh/kristo144/tap)
 
 ## Description
@@ -47,10 +49,10 @@ Check the example bots provided for more details.
 
 ### Contract of Bot class
 
-| Method | Parameters | Returns | Description |
-|--------|------------|---------|-------------|
-|on_message|self: Bot,<br>mc: mcpi.minecraft.Minecraft,<br>msg: mcpi.event.ChatEvent| No return value | Function that is called when the bot is mentioned |
-|get_name|None|str|The name of the bot, defined at instantiation time|
+| Method     | Parameters                                                               | Returns         | Description                                        |
+|------------|--------------------------------------------------------------------------|-----------------|----------------------------------------------------|
+| on_message | self: Bot,<br>mc: mcpi.minecraft.Minecraft,<br>msg: mcpi.event.ChatEvent | No return value | Function that is called when the bot is mentioned  |
+| get_name   | None                                                                     | str             | The name of the bot, defined at instantiation time |
 
 
 ## Usage
@@ -66,14 +68,15 @@ To run the examples, first start the minecraft server, then run `run.sh`
 ## Examples
 
 The following bot examples are available in this repository:
-|Bot|Description|
-|---|---|
-|ManagerBot|Lists available bots|
-|OracleBot|Magic 8 ball clone, responds to yes or no questions|
-|EchoBot|Repeats what you said|
-|BuilderBot|Builds you a wooden house|
-|TrivialBot|Play a trivia game, if you dare...|
-|toBohcE|dias uoy tahw staepeR|
+
+| Bot        | Description                                         |
+|------------|-----------------------------------------------------|
+| ManagerBot | Lists available bots                                |
+| OracleBot  | Magic 8 ball clone, responds to yes or no questions |
+| EchoBot    | Repeats what you said                               |
+| BuilderBot | Builds you a wooden house                           |
+| TrivialBot | Play a trivia game, if you dare...                  |
+| toBohcE    | dias uoy tahw staepeR                               |
 
 ## Diagrams
 
@@ -88,4 +91,4 @@ The following bot examples are available in this repository:
 ### YouTube tutorial
 We offer a YouTube video where you can check how is the interaction with the framework.
 In the video you can watch what can exactly do every example bot.
-Link: https://youtu.be/7e-gCHYWo4Q 
+Link: [https://youtu.be/7e-gCHYWo4Q](https://youtu.be/7e-gCHYWo4Q)
